@@ -28,4 +28,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('category/edit/{id}', 'CategoryController@edit')->name('category.edit');
     Route::put('category/update/{id}', 'CategoryController@update')->name('category.update');
     Route::delete('category/delete/{id}', 'CategoryController@delete')->name('category.delete');
+
+    //Ingredient
+    Route::get('ingredient', 'IngredientController@index')->name('ingredient.index');
+    Route::post('ingredient', 'IngredientController@store')->name('ingredient.store');
+    Route::get('ingredient/edit/{id}', 'IngredientController@edit')->name('ingredient.edit');
+    Route::put('ingredient/update/{id}', 'IngredientController@update')->name('ingredient.update');
+    Route::delete('ingredient/delete/{id}', 'IngredientController@delete')->name('ingredient.delete');
 });

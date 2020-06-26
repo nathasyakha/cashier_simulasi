@@ -14,7 +14,9 @@ class IngredientController extends Controller
      */
     public function index()
     {
-        //
+        $ingredient = Ingredient::all();
+
+        return view('ingredient.index', compact('ingredient'));
     }
 
     /**
@@ -35,7 +37,19 @@ class IngredientController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'ing_name' => 'required',
+            'stock' => 'required',
+            'unit' => 'required'
+        ]);
+
+        $ingredient = Ingredient::create([
+            'ing_name' => $request['ing_name'],
+            'stock' => $request['ing_name'],
+            'unit' => $request['unit']
+        ]);
+
+        return response()->json($ingredient);
     }
 
     /**
@@ -55,9 +69,11 @@ class IngredientController extends Controller
      * @param  \App\Ingredient  $ingredient
      * @return \Illuminate\Http\Response
      */
-    public function edit(Ingredient $ingredient)
+    public function edit($id)
     {
-        //
+        $ingredient = Ingredient::find($id);
+
+        return response()->json($ingredient);
     }
 
     /**
@@ -67,9 +83,23 @@ class IngredientController extends Controller
      * @param  \App\Ingredient  $ingredient
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Ingredient $ingredient)
+    public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'ing_name' => 'required',
+            'stock' => 'required',
+            'unit' => 'required'
+        ]);
+
+        $ingredient = Ingredient::findOrFail($id);
+
+        $ingredient['ing_name'] = $request->ing_name;
+        $ingredient['stock'] = $request->stock;
+        $ingredient['unit'] = $request->unit;
+
+        $ingredient->update();
+
+        return response()->json($ingredient);
     }
 
     /**
@@ -78,8 +108,12 @@ class IngredientController extends Controller
      * @param  \App\Ingredient  $ingredient
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Ingredient $ingredient)
+    public function destroy($id)
     {
-        //
+        $ingredient = Ingredient::findOrFail($id);
+
+        $ingredient->delete();
+
+        return response()->json(['message' => true]);
     }
 }
