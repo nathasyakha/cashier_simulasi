@@ -27,12 +27,19 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('category', 'CategoryController@store')->name('category.store');
     Route::get('category/edit/{id}', 'CategoryController@edit')->name('category.edit');
     Route::put('category/update/{id}', 'CategoryController@update')->name('category.update');
-    Route::delete('category/delete/{id}', 'CategoryController@delete')->name('category.delete');
+    Route::delete('category/delete/{id}', 'CategoryController@destroy')->name('category.delete');
 
     //Ingredient
     Route::get('ingredient', 'IngredientController@index')->name('ingredient.index');
     Route::post('ingredient', 'IngredientController@store')->name('ingredient.store');
     Route::get('ingredient/edit/{id}', 'IngredientController@edit')->name('ingredient.edit');
     Route::put('ingredient/update/{id}', 'IngredientController@update')->name('ingredient.update');
-    Route::delete('ingredient/delete/{id}', 'IngredientController@delete')->name('ingredient.delete');
+    Route::delete('ingredient/delete/{id}', 'IngredientController@destroy')->name('ingredient.delete');
+
+    //menu
+    Route::get('menu', 'MenuController@index')->name('menu.index');
+    Route::post('menu', 'MenuController@store')->name('menu.store');
+    Route::get('menu/edit/{id}', 'MenuController@edit')->name('menu.edit');
+    Route::put('menu/update/{id}', 'MenuController@update')->name('menu.update');
+    Route::delete('menu/delete/{id}', 'MenuController@destroy')->name('menu.delete');
 });

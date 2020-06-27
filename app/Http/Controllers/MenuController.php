@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
 use App\Menu;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class MenuController extends Controller
@@ -15,10 +17,15 @@ class MenuController extends Controller
      */
     public function index()
     {
-        if (request()->ajax()) {
-            $menu = Menu::with('category')->select('category_name.*');
+        $menu = DB::table('menus')
+            ->leftJoin('categories', 'categories.id', '=', 'menus.category_id')
+            ->select('menus.*', 'categories.category_name')
+            ->get();
 
-            return DataTables::of($menu)
+        $category = Category::all();
+
+        if (request()->ajax()) {
+            return  DataTables::of($menu)
                 ->addIndexColumn()
                 ->addColumn('action', function ($data) {
                     $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $data->id . '" data-original-title="Edit" class="edit btn btn-info btn-sm editForm"><i class="far fa-edit"></i> Edit</a>';
@@ -28,8 +35,7 @@ class MenuController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-
-        return view('menu.index', compact('menu'));
+        return view('menu.index', compact('menu', 'category'));
     }
 
     /**

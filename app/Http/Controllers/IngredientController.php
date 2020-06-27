@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Ingredient;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class IngredientController extends Controller
 {
@@ -15,7 +16,18 @@ class IngredientController extends Controller
     public function index()
     {
         $ingredient = Ingredient::all();
+        if (request()->ajax()) {
 
+            return DataTables::of($ingredient)
+                ->addIndexColumn()
+                ->addColumn('action', function ($data) {
+                    $btn = '<a href="javascript:void(0)"  onclick="add(0)" data-toggle="tooltip"  data-id="' . $data->id . '" data-original-title="Edit" class="edit btn btn-info btn-sm edit"><i class="far fa-edit"></i> Edit</a>';
+                    $btn = $btn . ' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $data->id . '" data-original-title="Delete" class="btn btn-danger btn-sm delete"><i class="far fa-trash-alt"></i> Delete</a>';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
         return view('ingredient.index', compact('ingredient'));
     }
 
@@ -45,7 +57,7 @@ class IngredientController extends Controller
 
         $ingredient = Ingredient::create([
             'ing_name' => $request['ing_name'],
-            'stock' => $request['ing_name'],
+            'stock' => $request['stock'],
             'unit' => $request['unit']
         ]);
 
