@@ -5,12 +5,12 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>Manage Menu</h1>
+                <h1>Manage Invoice</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{route('home')}}">Home</a></li>
-                    <li class="breadcrumb-item active">Menu</li>
+                    <li class="breadcrumb-item active">Invoice</li>
                 </ol>
             </div>
         </div>
@@ -21,33 +21,38 @@
 <!-- Main content -->
 <section class="content">
     <div class="row">
-        <div class="col-6">
+        <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    @include('menu.form')
+                    @include('invoice.form')
                 </div>
             </div>
-        </div>
 
-        <div class="col-6">
-            <div class="card">
-                <div class="card-body">
-                    <table id="form-table" class="table table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th>Category</th>
-                                <th>Name</th>
-                                <th>Price</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Invoice List</h3>
+                    </div>
+                    <div class="card-body">
+                        <table id="form-table" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Invoice No.</th>
+                                    <th>Date</th>
+                                    <th>Menu</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Subtotal</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 </section>
 
 
@@ -61,24 +66,27 @@
 
     function addRow() {
         var tr = '<tr>' +
-            ' <td> <select type="text" name="ingredient_id[]" class="form-control" autofocus required>' +
-            ' <option value="0" disable="true" selected="true">=== Choose Ingredient ===</option>' +
-            '@foreach ($ingredient as $key => $row)' +
-            ' <option value="{{$row->id}}">{{$row->ing_name}}</option>' +
-            '@endforeach' +
+            ' <td> <select type="text" id="menu_id" name="menu_id[]" class="form-control" autofocus required>' +
+            '<option value="0" disable="true" selected="true">=== Choose Menu ===</option>' +
+            '@foreach ($menu as $key => $row)' +
+            '<option value="{{$row->id}}">{{$row->menu_name}}</option>' +
+            ' @endforeach' +
             ' </select>' +
             ' <span class="help-block with-errors"></span></td>' +
-            ' <td> <input type="text" name="qty[]" class="form-control" autofocus required>' +
+            ' <td> <input type="text" id="quantity" name="quantity[]" class="form-control quantity" placeholder="0" autofocus required>' +
             ' <span class="help-block with-errors"></span></td>' +
-            ' <td> <input type="text" name="unit[]" class="form-control" autofocus required>' +
+            '<td> <input type="text" id="price" name="price[]" class="form-control price" value="0" readonly style="background-color: gainsboro;">' +
             ' <span class="help-block with-errors"></span></td>' +
-            '<td><a href="#" class="btn btn-danger remove"><i class="far fa-trash-alt"></i></a></td>' +
+            ' <td> <input type="text" id="subtotal" name="subtotal[]" value="0" class="form-control subtotal" readonly style="background-color: gainsboro;">' +
+            ' <span class="help-block with-errors"></span></td>' +
+            ' <td style="text-align: center;">' +
+            '  <a href="#" class="btn btn-danger btn-sm remove"><i class="far fa-trash-alt"></i></a>' +
             '</tr>';
-        $('#recipe tbody').append(tr);
+        $('#invoice tbody').append(tr);
     };
 
     $(document).on('click', '.remove', function() {
-        var last = $('#recipe tbody tr').length;
+        var last = $('#invoice tbody tr').length;
         if (last == 1) {
             Swal.fire({
                 icon: 'error',
@@ -86,27 +94,60 @@
                 text: 'You can not remove last row!',
             })
         } else {
-            $(this).parents('#recipe tr').remove();
+            $(this).parents('#invoice tr').remove();
         }
     });
 
     $(function() {
-        $(document).on('change', '#ingredient_id', function() {
-            var ingredient_id = $(this).val();
+        $(document).on('change', '#menu_id', function() {
+            var menu_id = $(this).val();
             $.ajax({
-                url: "{{route('get-unit')}}",
+                url: "{{route('get-price')}}",
                 type: "GET",
                 data: {
-                    ingredient_id: ingredient_id
+                    menu_id: menu_id
                 },
                 success: function(data) {
-                    $('#unit').val(data);
+                    $('#price').val(data);
                 }
             });
         });
     });
 
+    $(document).on('keyup click', '.price,.quantity', function() {
+        var tr = $(this).closest("tr");
 
+        var price = tr.find("input.price").val();
+        var quantity = tr.find("input.quantity").val();
+        var subtotal = (price * quantity);
+
+        tr.find("input.subtotal").val(subtotal);
+
+        totalAmount();
+    });
+
+    function totalAmount() {
+        var totalAmount = 0;
+        $(".subtotal").each(function() {
+            var subtotal = $(this).val();
+            if (!isNaN(subtotal) && subtotal.length != 0) {
+                totalAmount += parseFloat(subtotal)
+            }
+        });
+
+        $('.totalAmount').val(totalAmount);
+    }
+
+    $(document).ready(function() {
+        var $fields = $('#totalAmount, #paidAmount');
+        $fields.keyup(function() {
+            var totalAmount = parseFloat($('#totalAmount').val());
+            var paidAmount = parseFloat($('#paidAmount').val());
+            var dueAmount = (paidAmount - totalAmount);
+
+            $('#dueAmount').val(dueAmount);
+        });
+    });
 
     $.ajaxSetup({
         headers: {

@@ -21,6 +21,8 @@ Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/get-unit', 'MenuController@getUnit')->name('get-unit');
+    Route::get('/get-price', 'InvoiceController@getPrice')->name('get-price');
 
     //Category
     Route::get('category', 'CategoryController@index')->name('category.index');
@@ -42,4 +44,18 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('menu/edit/{id}', 'MenuController@edit')->name('menu.edit');
     Route::put('menu/update/{id}', 'MenuController@update')->name('menu.update');
     Route::delete('menu/delete/{id}', 'MenuController@destroy')->name('menu.delete');
+
+    //Recipe
+    Route::get('recipe', 'RecipeController@index')->name('recipe.index');
+    Route::post('recipe', 'RecipeController@store')->name('recipe.store');
+    Route::get('recipe/edit/{id}', 'RecipeController@edit')->name('recipe.edit');
+    Route::put('recipe/update/{id}', 'RecipeController@update')->name('recipe.update');
+    Route::delete('recipe/delete/{id}', 'RecipeController@destroy')->name('recipe.delete');
+
+    //invoice
+    Route::get('invoice', 'InvoiceController@index')->name('invoice.index');
+    Route::post('invoice', 'InvoiceController@store')->name('invoice.store');
+    Route::get('invoice/edit/{id}', 'InvoiceController@edit')->name('invoice.edit');
+    Route::put('invoice/update/{id}', 'InvoiceController@update')->name('invoice.update');
+    Route::delete('invoice/delete/{id}', 'InvoiceController@destroy')->name('invoice.delete');
 });

@@ -16,10 +16,13 @@ class CreateRecipesTable extends Migration
         Schema::create('recipes', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('menu_id')->unsigned();
-            $table->string('desc')->nullable();
+            $table->integer('ingredient_id')->unsigned();
+            $table->float('qty');
+            $table->string('unit');
             $table->timestamps();
 
             $table->foreign('menu_id')->references('id')->on('menus')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('ingredient_id')->references('id')->on('ingredients')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\Ingredient;
 use App\Menu;
+use App\Recipe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -24,6 +26,8 @@ class MenuController extends Controller
 
         $category = Category::all();
 
+        $ingredient = Ingredient::all();
+
         if (request()->ajax()) {
             return  DataTables::of($menu)
                 ->addIndexColumn()
@@ -35,7 +39,7 @@ class MenuController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('menu.index', compact('menu', 'category'));
+        return view('menu.index', compact('menu', 'category', 'ingredient'));
     }
 
     /**
@@ -59,16 +63,28 @@ class MenuController extends Controller
         $request->validate([
             'category_id' => 'required|exists:categories,id',
             'menu_name' => 'required',
-            'price' => 'required'
+            'price' => 'required',
+            'ingredient_id' => 'required',
+            'qty' => 'required',
+            'unit' => 'required',
+
         ]);
 
-        $menu = Menu::create([
-            'category_id' => $request['category_id'],
-            'menu_name' => $request['menu_name'],
-            'price' => $request['price']
-        ]);
+        $menu = $request->all();
+        $last = Menu::create($menu)->id;
+        if (count($request->ingredient_id) > 0) {
+            foreach ($request->ingredient_id as $recipe => $v) {
+                $data = array(
+                    'menu_id' => $last,
+                    'ingredient_id' => $request->ingredient_id[$recipe],
+                    'qty' => $request->qty[$recipe],
+                    'unit' => $request->unit[$recipe],
+                );
+                Recipe::insert($data);
+            }
+        }
 
-        return response()->json($menu);
+        return redirect()->back();
     }
 
     /**
@@ -134,5 +150,13 @@ class MenuController extends Controller
         $menu->delete();
 
         return response()->json($menu);
+    }
+
+    public function getUnit(Request $request)
+    {
+        $ing_id = $request->ingredient_id;
+        $unit = Ingredient::where('id', $ing_id)->first()->unit;
+
+        return response()->json($unit);
     }
 }

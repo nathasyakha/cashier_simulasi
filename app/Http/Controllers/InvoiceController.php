@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Invoice;
+use App\Menu;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
@@ -14,7 +15,10 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        //
+        $invoice = Invoice::orderBy('date')->orderBy('id')->get();
+        $menu = Menu::all();
+
+        return view('invoice.index', compact('invoice', 'menu'));
     }
 
     /**
@@ -81,5 +85,13 @@ class InvoiceController extends Controller
     public function destroy(Invoice $invoice)
     {
         //
+    }
+
+    public function getPrice(Request $request)
+    {
+        $menu_id = $request->menu_id;
+        $price = Menu::where('id', $menu_id)->first()->price;
+
+        return response()->json($price);
     }
 }

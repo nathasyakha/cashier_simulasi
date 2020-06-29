@@ -92,6 +92,12 @@
                                 <p>Ingredient</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{route('invoice.index')}}" class="nav-link">
+                                <i class="nav-icon fas fa-file-invoice"></i>
+                                <p>Invoice</p>
+                            </a>
+                        </li>
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
