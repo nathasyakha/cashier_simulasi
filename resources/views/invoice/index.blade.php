@@ -66,7 +66,7 @@
 
     function addRow() {
         var tr = '<tr>' +
-            ' <td> <select type="text" id="menu_id" name="menu_id[]" class="form-control" autofocus required>' +
+            ' <td> <select type="text" id="menu_id" name="menu_id[]" class="form-control menu_id" autofocus required>' +
             '<option value="0" disable="true" selected="true">=== Choose Menu ===</option>' +
             '@foreach ($menu as $key => $row)' +
             '<option value="{{$row->id}}">{{$row->menu_name}}</option>' +

@@ -61,16 +61,16 @@
 
     function addRow() {
         var tr = '<tr>' +
-            ' <td> <select type="text" name="ingredient_id[]" class="form-control" autofocus required>' +
+            ' <td> <select type="text" name="ingredient_id[]" id="ingredient_id" class="form-control ingredient_id" autofocus required>' +
             ' <option value="0" disable="true" selected="true">=== Choose Ingredient ===</option>' +
             '@foreach ($ingredient as $key => $row)' +
             ' <option value="{{$row->id}}">{{$row->ing_name}}</option>' +
             '@endforeach' +
             ' </select>' +
             ' <span class="help-block with-errors"></span></td>' +
-            ' <td> <input type="text" name="qty[]" class="form-control" autofocus required>' +
+            ' <td> <input type="text" name="qty[]" id="qty" class="form-control qty" autofocus required>' +
             ' <span class="help-block with-errors"></span></td>' +
-            ' <td> <input type="text" name="unit[]" class="form-control" autofocus required>' +
+            ' <td> <input type="text" name="unit[]" id="unit" class="form-control unit" readonly style="background-color: gainsboro;">' +
             ' <span class="help-block with-errors"></span></td>' +
             '<td><a href="#" class="btn btn-danger remove"><i class="far fa-trash-alt"></i></a></td>' +
             '</tr>';
