@@ -21,24 +21,21 @@
 <!-- Main content -->
 <section class="content">
     <div class="row">
-        <div class="col-6">
+        <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    @include('menu.form')
+                    <a href="javascript:void(0)" id="add-data" class="btn btn-outline-primary pull-right" style="margin-top: 8px;">Add Ingredient</a>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-6">
-            <div class="card">
                 <div class="card-body">
                     <table id="form-table" class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th>No.</th>
                                 <th>Category</th>
                                 <th>Name</th>
                                 <th>Price</th>
+                                <th>Ingredient</th>
+                                <th>Quantity</th>
+                                <th>Unit</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -50,7 +47,7 @@
     </div>
 </section>
 
-
+@include('menu.form')
 @endsection
 
 @push('script')
@@ -91,8 +88,9 @@
     });
 
     $(function() {
-        $(document).on('change', '#ingredient_id', function() {
-            var ingredient_id = $(this).val();
+        $(document).on('change', '.ingredient_id', function() {
+            var ingredient_id = $(this).find('option:selected').val();
+            var $unit = $(this).parent().parent().find('td > .unit');
             $.ajax({
                 url: "{{route('get-unit')}}",
                 type: "GET",
@@ -100,7 +98,7 @@
                     ingredient_id: ingredient_id
                 },
                 success: function(data) {
-                    $('#unit').val(data);
+                    $unit.val(data);
                 }
             });
         });
@@ -123,33 +121,43 @@
                 url: "{{route('menu.index')}}",
                 type: 'GET',
             },
-            order: [
-                [1, "asc"]
-            ],
             columns: [{
-                    data: 'DT_RowIndex',
-                    name: 'no',
-                    orderable: false,
-                    width: '3%'
-                },
-                {
                     data: 'category_name',
-                    name: 'categories.category_name',
                 },
                 {
                     data: "menu_name",
-                    name: 'menus.menu_name',
                 },
                 {
                     data: 'price',
-                    name: 'menus.price',
+                },
+                {
+                    data: 'ing_name',
+                },
+                {
+                    data: 'qty',
+                },
+                {
+                    data: 'unit',
                 },
                 {
                     data: 'action',
-                    name: 'action'
                 }
-            ]
+            ],
+            order: [
+                [2, "asc"]
+            ],
+            rowGroup: {
+                dataSrc: ['category_name', 'menu_name']
+            }
         });
+    });
+
+    $('#add-data').click(function() {
+        $('#saveBtn').val("Add");
+        $('#id').val('');
+        $('#form-menu').trigger("reset");
+        $('#modaltitle').html("Add New Ingredient");
+        $('#modal-form').modal('show');
     });
 
 

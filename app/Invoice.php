@@ -12,4 +12,14 @@ class Invoice extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function detail()
+    {
+        return $this->hasMany(Detail_Invoice::class);
+    }
+
+    public function payment()
+    {
+        return $this->hasMany(Payment::class);
+    }
 }

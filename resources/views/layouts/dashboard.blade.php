@@ -16,6 +16,7 @@
     <!-- DataTables -->
     <link rel="stylesheet" href="{{asset('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
     <link rel="stylesheet" href="{{asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.1.2/css/rowGroup.dataTables.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{asset('dist/css/adminlte.min.css')}}">
     <!-- Google Font: Source Sans Pro -->
@@ -40,7 +41,10 @@
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="{{route('logout')}}" class="nav-link">Logout</a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="btn btn-light">Logout</button>
+                    </form>
                 </li>
             </ul>
         </nav>
@@ -80,16 +84,17 @@
                                     Category
                                 </p>
                             </a>
-                        <li class="nav-item">
-                            <a href="{{route('menu.index')}}" class="nav-link">
-                                <i class="nav-icon fas fa-coins"></i>
-                                <p>Menu</p>
-                            </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{route('ingredient.index')}}" class="nav-link">
                                 <i class="nav-icon fas fa-file-invoice"></i>
                                 <p>Ingredient</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('menu.index')}}" class="nav-link">
+                                <i class="nav-icon fas fa-coins"></i>
+                                <p>Menu</p>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -136,6 +141,7 @@
     <script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
     <script src="{{asset('plugins/datatables-responsive/js/dataTables.responsive.min.js')}}"></script>
     <script src="{{asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js')}}"></script>
+    <script src="https://cdn.datatables.net/rowgroup/1.1.2/js/dataTables.rowGroup.min.js"></script>
     <!-- AdminLTE App -->
     <script type="text/javascript" src="{{asset('/dist/js/adminlte.js')}}"></script>
     <script src="{{asset('jquery.validate.min.js')}}" integrity="sha256-sPB0F50YUDK0otDnsfNHawYmA5M0pjjUf4TvRJkGFrI=" crossorigin="anonymous"></script>

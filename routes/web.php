@@ -23,6 +23,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/get-unit', 'MenuController@getUnit')->name('get-unit');
     Route::get('/get-price', 'InvoiceController@getPrice')->name('get-price');
+    Route::get('/get-user', 'InvoiceController@getUser')->name('get-user');
 
     //Category
     Route::get('category', 'CategoryController@index')->name('category.index');

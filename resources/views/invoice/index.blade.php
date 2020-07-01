@@ -24,37 +24,35 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    @include('invoice.form')
+                    <h4>
+                        <a href="javascript:void(0)" id="add-data" class="btn btn-outline-primary pull-right" style="margin-top: 8px;">Add Invoice</a>
+                    </h4>
                 </div>
-            </div>
-
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Invoice List</h3>
-                    </div>
-                    <div class="card-body">
-                        <table id="form-table" class="table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th>User</th>
-                                    <th>Invoice No.</th>
-                                    <th>Date</th>
-                                    <th>Menu</th>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
-                                    <th>Subtotal</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
+                <div class="card-body">
+                    <table id="form-table" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Invoice No.</th>
+                                <th>Date</th>
+                                <th>Menu</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Subtotal</th>
+                                <th>Total Amount</th>
+                                <th>Paid Amount</th>
+                                <th>Due Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
                 </div>
             </div>
         </div>
+    </div>
 </section>
-
+@include('invoice.form')
 
 @endsection
 
@@ -99,8 +97,9 @@
     });
 
     $(function() {
-        $(document).on('change', '#menu_id', function() {
-            var menu_id = $(this).val();
+        $(document).on('change', '.menu_id', function() {
+            var menu_id = $(this).find('option:selected').val();
+            var $price = $(this).parent().parent().find('td > .price');
             $.ajax({
                 url: "{{route('get-price')}}",
                 type: "GET",
@@ -108,7 +107,7 @@
                     menu_id: menu_id
                 },
                 success: function(data) {
-                    $('#price').val(data);
+                    $price.val(data);
                 }
             });
         });
@@ -135,17 +134,17 @@
             }
         });
 
-        $('.totalAmount').val(totalAmount);
+        $('.total_amount').val(totalAmount);
     }
 
     $(document).ready(function() {
-        var $fields = $('#totalAmount, #paidAmount');
+        var $fields = $('#total_amount, #paid_amount');
         $fields.keyup(function() {
-            var totalAmount = parseFloat($('#totalAmount').val());
-            var paidAmount = parseFloat($('#paidAmount').val());
+            var totalAmount = parseFloat($('#total_amount').val());
+            var paidAmount = parseFloat($('#paid_amount').val());
             var dueAmount = (paidAmount - totalAmount);
 
-            $('#dueAmount').val(dueAmount);
+            $('#due_amount').val(dueAmount);
         });
     });
 
@@ -161,55 +160,80 @@
             responsive: true,
             autoWidth: false,
             ajax: {
-                url: "{{route('menu.index')}}",
+                url: "{{route('invoice.index')}}",
                 type: 'GET',
             },
-            order: [
-                [1, "asc"]
-            ],
             columns: [{
-                    data: 'DT_RowIndex',
-                    name: 'no',
-                    orderable: false,
-                    width: '3%'
+                    data: 'name',
                 },
                 {
-                    data: 'category_name',
-                    name: 'categories.category_name',
+                    data: 'id',
                 },
                 {
-                    data: "menu_name",
-                    name: 'menus.menu_name',
+                    data: "date",
+                },
+                {
+                    data: 'menu_name',
+                },
+                {
+                    data: 'quantity',
                 },
                 {
                     data: 'price',
-                    name: 'menus.price',
+                },
+                {
+                    data: 'subtotal',
+                },
+                {
+                    data: 'total_amount',
+                },
+                {
+                    data: 'paid_amount',
+                },
+                {
+                    data: 'due_amount',
                 },
                 {
                     data: 'action',
-                    name: 'action'
                 }
-            ]
+            ],
+            order: [
+                [2, "asc"]
+            ],
+            rowGroup: {
+                dataSrc: 'id'
+            }
         });
+    });
+
+    $('#add-data').click(function() {
+        $('#saveBtn').val("Add");
+        $('#id').val('');
+        $('#form-invoice').trigger("reset");
+        $('#modaltitle').html("Add New Invoice");
+        $('#modal-form').modal('show');
     });
 
 
     $(document).on('click', '.edit', function() {
         var id = $(this).data('id');
         $.ajax({
-            url: "{{url('menu/edit')}}" + "/" + id,
+            url: "{{url('invoice/edit')}}" + "/" + id,
             type: "GET",
             dataType: "JSON",
             success: function(data) {
                 $('#id').val(data.id);
-                $('#category_id').val(data.category_id);
-                $('#menu_name').val(data.menu_name);
+                $('#user_id').val(data.user_id);
+                $('#date').val(data.date);
+                $('#menu_id').val(data.menu_id);
+                $('#quantity').val(data.quantity);
                 $('#price').val(data.price);
-                $('#ingredient_id').val(data.ingredient_id);
-                $('#qty').val(data.qty);
-                $('#unit').val(data.unit);
+                $('#subtotal').val(data.subtotal);
+                $('#total_amount').val(data.total_amount);
+                $('#paid_amount').val(data.paid_amount);
+                $('#due_amount').val(data.due_amount);
 
-                $('#modaltitle').html("Edit Menu");
+                $('#modaltitle').html("Edit Invoice");
                 $('#saveBtn').val("Edit");
                 $('#modal-form').modal('show');
             }
@@ -218,8 +242,8 @@
 
     $(document).ready(function() {
 
-        if ($("#form-menu").length > 0) {
-            $("#form-menu").validate({
+        if ($("#form-invoice").length > 0) {
+            $("#form-invoice").validate({
 
                 submitHandler: function(form) {
 
@@ -227,20 +251,20 @@
                     $('#saveBtn').html('Saving..');
 
                     if ($('#saveBtn').val() == 'Add') {
-                        url = "{{ route('menu.store') }}";
+                        url = "{{ route('invoice.store') }}";
                         method = "POST";
                     } else {
                         var id = document.getElementById('id').value;
-                        url = "{{url('menu/update')}}" + "/" + id;
+                        url = "{{url('invoice/update')}}" + "/" + id;
                         method = "PUT";
                     }
                     $.ajax({
-                        data: $('#form-menu').serialize(),
+                        data: $('#form-invoice').serialize(),
                         url: url,
                         type: method,
                         dataType: 'json',
                         success: function(data) { //jika berhasil 
-                            $('#form-menu').trigger("reset");
+                            $('#form-invoice').trigger("reset");
                             $('#modal-form').modal('hide');
                             $('#saveBtn').html('Saved');
                             var oTable = $('#form-table').dataTable();
@@ -279,7 +303,7 @@
                 var id = $(this).data('id');
                 $.ajax({
                     type: "DELETE",
-                    url: "{{ url('menu/delete') }}" + '/' + id,
+                    url: "{{ url('invoice/delete') }}" + '/' + id,
                     success: function(data) {
                         var oTable = $('#form-table').dataTable();
                         oTable.fnDraw(false);

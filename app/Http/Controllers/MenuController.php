@@ -21,7 +21,9 @@ class MenuController extends Controller
     {
         $menu = DB::table('menus')
             ->leftJoin('categories', 'categories.id', '=', 'menus.category_id')
-            ->select('menus.*', 'categories.category_name')
+            ->leftJoin('recipes', 'recipes.menu_id', '=', 'menus.id')
+            ->leftJoin('ingredients', 'ingredients.id', '=', 'recipes.ingredient_id')
+            ->select('menus.*', 'categories.category_name', 'recipes.ingredient_id', 'recipes.qty', 'recipes.unit', 'ingredients.ing_name')
             ->get();
 
         $category = Category::all();
@@ -106,7 +108,7 @@ class MenuController extends Controller
      */
     public function edit($id)
     {
-        $menu = Menu::find($id);
+        $menu = Menu::with('recipe')->find($id)->get();
 
         return response()->json($menu);
     }
@@ -123,18 +125,33 @@ class MenuController extends Controller
         $request->validate([
             'category_id' => 'required|exists:categories,id',
             'menu_name' => 'required',
-            'price' => 'required'
+            'price' => 'required',
+            'ingredient_id' => 'required',
+            'qty' => 'required',
+            'unit' => 'required',
+
         ]);
 
-        $menu = Menu::findOrFail($id);
+        $menu = Menu::findOrFail($id)->id;
 
         $menu['category_id'] = $request->category_id;
         $menu['menu_name'] = $request->menu_name;
         $menu['price'] = $request->price;
-
         $menu->update();
 
-        return response()->json($menu);
+        if (count($request->ingredient_id) > 0) {
+            foreach ($request->ingredient_id as $recipe => $v) {
+                $data = array(
+                    'menu_id' => $menu,
+                    'ingredient_id' => $request->ingredient_id[$recipe],
+                    'qty' => $request->qty[$recipe],
+                    'unit' => $request->unit[$recipe],
+                );
+                Recipe::insert($data);
+            }
+        }
+
+        return redirect()->back();
     }
 
     /**
