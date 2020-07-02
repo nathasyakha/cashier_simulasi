@@ -64,14 +64,14 @@
 
     function addRow() {
         var tr = '<tr>' +
-            ' <td> <select type="text" id="menu_id" name="menu_id[]" class="form-control menu_id" autofocus required>' +
+            ' <td> <select type="text" id="menu_id" name="menu_id[]" class="form-control menu_id" required>' +
             '<option value="0" disable="true" selected="true">=== Choose Menu ===</option>' +
             '@foreach ($menu as $key => $row)' +
             '<option value="{{$row->id}}">{{$row->menu_name}}</option>' +
             ' @endforeach' +
             ' </select>' +
             ' <span class="help-block with-errors"></span></td>' +
-            ' <td> <input type="text" id="quantity" name="quantity[]" class="form-control quantity" placeholder="0" autofocus required>' +
+            ' <td> <input type="text" id="quantity" name="quantity[]" class="form-control quantity" placeholder="0" required>' +
             ' <span class="help-block with-errors"></span></td>' +
             '<td> <input type="text" id="price" name="price[]" class="form-control price" value="0" readonly style="background-color: gainsboro;">' +
             ' <span class="help-block with-errors"></span></td>' +
@@ -266,7 +266,7 @@
                         success: function(data) { //jika berhasil 
                             $('#form-invoice').trigger("reset");
                             $('#modal-form').modal('hide');
-                            $('#saveBtn').html('Saved');
+                            $('#saveBtn').html('Save');
                             var oTable = $('#form-table').dataTable();
                             oTable.fnDraw(false); //reset datatable
                             Swal.fire(

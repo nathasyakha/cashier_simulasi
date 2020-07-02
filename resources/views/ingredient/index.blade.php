@@ -151,7 +151,7 @@
                         success: function(data) { //jika berhasil 
                             $('#form-ing').trigger("reset");
                             $('#modal-form').modal('hide');
-                            $('#saveBtn').html('Saved');
+                            $('#saveBtn').html('Save');
                             var oTable = $('#form-table').dataTable();
                             oTable.fnDraw(false); //reset datatable
                             Swal.fire(

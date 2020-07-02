@@ -156,7 +156,7 @@
         $('#saveBtn').val("Add");
         $('#id').val('');
         $('#form-menu').trigger("reset");
-        $('#modaltitle').html("Add New Ingredient");
+        $('#modaltitle').html("Add New Menu");
         $('#modal-form').modal('show');
     });
 
@@ -209,7 +209,7 @@
                         success: function(data) { //jika berhasil 
                             $('#form-menu').trigger("reset");
                             $('#modal-form').modal('hide');
-                            $('#saveBtn').html('Saved');
+                            $('#saveBtn').html('Save');
                             var oTable = $('#form-table').dataTable();
                             oTable.fnDraw(false); //reset datatable
                             Swal.fire(

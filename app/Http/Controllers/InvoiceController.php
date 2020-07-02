@@ -74,7 +74,7 @@ class InvoiceController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, $id)
+    public function store(Request $request)
     {
         $request->validate([
             'date' => 'required',
@@ -145,7 +145,7 @@ class InvoiceController extends Controller
      * @param  \App\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Invoice $invoice)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'date' => 'required',
@@ -157,7 +157,7 @@ class InvoiceController extends Controller
             'due_amount' => 'required',
             'total_amount' => 'required',
         ]);
-        $invoice = new Invoice();
+        $invoice = Invoice::findOrFail($id);
 
         $invoice->user_id = Auth::user()->id;
         $invoice->date = $request->date;
